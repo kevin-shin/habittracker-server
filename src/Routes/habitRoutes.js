@@ -25,7 +25,7 @@ router.post('/habit', async (req, res) => {
         res.send(habit);
     } catch (e) {
         console.log(e);
-        res.status(422).send({ error: "Encountered error with POST." });
+        res.status(422).send({ error: "Encountered error with POST. " });
     }
 });
 

@@ -5,7 +5,7 @@ const habitEntrySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Habit'
     },
-    done: Boolean,
+    complete: Boolean,
     notes: String
 });
 
@@ -17,8 +17,7 @@ const diaryEntrySchema = new mongoose.Schema({
     entry: {
         type: [habitEntrySchema],
         required: true
-    }, 
-    
+    },
 })
 
 mongoose.model('DiaryEntry', diaryEntrySchema);

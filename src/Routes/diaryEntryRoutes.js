@@ -10,11 +10,22 @@ router.get('/entry', async (req, res) => {
     let entries = [];
 
     if (year && month) {
-        entries = await DiaryEntry.find({ month, year });
+        entries = await DiaryEntry
+            .find({ month, year })
+            .populate({
+                path: 'entry',
+                populate: { path: 'habit' }
+            });
     }
     else {
-        entries = await DiaryEntry.find({});
+        entries = await DiaryEntry
+            .find({})
+            .populate({
+                path: 'entry',
+                populate: { path: 'habit' }
+            });
     }
+
     res.send(entries);
 });
 
@@ -25,6 +36,9 @@ router.get('/entry/today', async (req, res) => {
             $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0),
             $lte: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
         }
+    }).populate({
+        path: 'entry',
+        populate: { path: 'habit' }
     });
 
     res.send(entry);
@@ -39,15 +53,11 @@ router.post('/entry', async (req, res) => {
             .send({ error: "Missing fields." });
     }
 
-    const dateSplit = date.split("-");
-    date = new Date(dateSplit[0], dateSplit[1], dateSplit[2]);
-
     try {
         const newEntry = new DiaryEntry({ date, entry });
         await newEntry.save();
         res.send(newEntry);
     } catch (e) {
-        console.log(e);
         res.status(422).send({ error: e });
     }
 })

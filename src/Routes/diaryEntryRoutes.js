@@ -64,16 +64,19 @@ router.post('/entry', async (req, res) => {
 
 // UPDATE 
 router.put('/entry', async (req, res) => {
-    const { date, entry } = req.body;
+    console.log("AM I HITTING HERE");
+    const { id, entry } = req.body;
 
-    if (!date || !entry) {
+    if (!id || !entry) {
+
         return res.status(422)
             .send({ error: "Missing fields." });
     }
 
     try {
-        const updatedEntry = await DiaryEntry.findOneAndUpdate({ date }, { entry }, { new: true });
-        updatedEntry.save();
+        console.log("HIT HERE");
+        const updatedEntry = DiaryEntry.findOneAndUpdate({ id }, { entry });
+        await updatedEntry.save();
         res.send(updatedEntry);
     } catch (e) {
         res.status(422).send({ error: "Encountered error with PUT" });

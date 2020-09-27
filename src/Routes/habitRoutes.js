@@ -22,7 +22,7 @@ router.post('/habit', async (req, res) => {
     try {
         const habit = new Habit({ name, repeat, remindTime });
         await habit.save();
-        res.status(204).send(habit);
+        res.status(201).json(habit);
     } catch (e) {
         console.log(e);
         res.status(422).send({ error: "Encountered error with POST. " });
@@ -43,7 +43,7 @@ router.put('/habit', async (req, res) => {
     console.log(id);
     try {
         const habit = await Habit.findOneAndUpdate({ _id: id }, update, { new: true });
-        res.status(204).send(habit);
+        res.status(201).json(habit);
     } catch (e) {
         console.log(e);
         res.status(422), send({ error: "Encountered error with POST." });
@@ -66,6 +66,5 @@ router.delete('/habit', async (req, res) => {
         res.status(422).send({ error: "Encountered error with DELETE" });
     }
 })
-
 
 module.exports = router;

@@ -26,7 +26,7 @@ router.get('/entry', async (req, res) => {
             });
     }
 
-    res.send(entries);
+    res.status(200).send(entries);
 });
 
 router.get('/entry/today', async (req, res) => {
@@ -41,7 +41,7 @@ router.get('/entry/today', async (req, res) => {
         populate: { path: 'habit' }
     });
 
-    res.send(entry);
+    res.status(200).send(entry);
 });
 
 // POST
@@ -56,7 +56,7 @@ router.post('/entry', async (req, res) => {
     try {
         const newEntry = new DiaryEntry({ date, entry });
         await newEntry.save();
-        res.send(newEntry);
+        res.status(201).json(newEntry);
     } catch (e) {
         res.status(422).send({ error: e });
     }
@@ -64,21 +64,17 @@ router.post('/entry', async (req, res) => {
 
 // UPDATE 
 router.put('/entry', async (req, res) => {
-    console.log("AM I HITTING HERE");
     const { id, entry } = req.body;
-
     if (!id || !entry) {
-
         return res.status(422)
             .send({ error: "Missing fields." });
     }
-
+    const update = { entry };
     try {
-        console.log("HIT HERE");
-        const updatedEntry = DiaryEntry.findOneAndUpdate({ id }, { entry });
-        await updatedEntry.save();
-        res.send(updatedEntry);
+        const updatedEntry = await DiaryEntry.findOneAndUpdate({ _id: id }, update, { new: true });
+        res.status(201).json(updatedEntry);
     } catch (e) {
+        console.log(e);
         res.status(422).send({ error: "Encountered error with PUT" });
     }
 
@@ -86,14 +82,15 @@ router.put('/entry', async (req, res) => {
 
 // DELETE
 router.delete('/entry', async (req, res) => {
-    const { entry } = req.body;
-    if (!entry) {
+    const { id } = req.body;
+    if (!id) {
         return res.status(422)
             .send({ error: "Missing fields." });
     }
 
     try {
-        await DiaryEntry.deleteOne({ entry });
+        await DiaryEntry.findByIdAndDelete(id);
+        res.status(200).send({ message: "Delete successful" });
     } catch (e) {
         res.status(422).send({ error: "Encountered error with DELETE" });
     }

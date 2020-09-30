@@ -46,6 +46,7 @@ router.get('/entry/today', async (req, res) => {
 
 // POST
 router.post('/entry', async (req, res) => {
+    console.log("HIT POST");
     let { date, entry } = req.body;
 
     if (!date || !entry) {
@@ -56,6 +57,15 @@ router.post('/entry', async (req, res) => {
     try {
         const newEntry = new DiaryEntry({ date, entry });
         await newEntry.save();
+        console.log("BEFORE");
+        console.log(newEntry);
+        let newEntryPopulated = await newEntry.populate({
+            path: 'entry',
+            populate: { path: 'habit' }
+        }).execPopulate();
+        console.log("HIT HERE")
+        console.log("MAIN ACTION");
+        console.log(newEntryPopulated);
         res.status(201).json(newEntry);
     } catch (e) {
         res.status(422).send({ error: e });

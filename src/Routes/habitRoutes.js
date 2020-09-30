@@ -38,9 +38,6 @@ router.put('/habit', async (req, res) => {
             .send({ error: "Missing fields." });
     }
     const update = { name, repeat, remindTime };
-    console.log("---->");
-    console.log(update);
-    console.log(id);
     try {
         const habit = await Habit.findOneAndUpdate({ _id: id }, update, { new: true });
         res.status(201).json(habit);
@@ -52,7 +49,7 @@ router.put('/habit', async (req, res) => {
 
 // DELETE 
 router.delete('/habit', async (req, res) => {
-    console.log("HIT DELETE");
+
     const { id } = req.body;
     if (!id) {
         return res.status(422)

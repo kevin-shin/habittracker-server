@@ -43,7 +43,7 @@ router.put('/habit', async (req, res) => {
         res.status(201).json(habit);
     } catch (e) {
         console.log(e);
-        res.status(422), send({ error: "Encountered error with POST." });
+        res.status(422).send({ error: "Encountered error with POST." });
     }
 });
 

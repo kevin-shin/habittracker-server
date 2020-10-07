@@ -5,7 +5,7 @@ const habitEntrySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Habit'
     },
-    complete: Boolean,
+    done: Boolean,
     notes: String
 });
 

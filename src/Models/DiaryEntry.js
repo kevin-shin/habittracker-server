@@ -10,14 +10,24 @@ const habitEntrySchema = new mongoose.Schema({
 });
 
 const diaryEntrySchema = new mongoose.Schema({
-    date: {
-        type: Date,
+    day: {
+        type: Number,
+        required: true
+    },
+    month: {
+        type: Number,
+        required: true
+    },
+    year: {
+        type: Number,
         required: true
     },
     entry: {
         type: [habitEntrySchema],
         required: true
     },
+    numerator: Number,
+    denominator: Number
 })
 
 mongoose.model('DiaryEntry', diaryEntrySchema);

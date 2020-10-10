@@ -6,61 +6,35 @@ const router = express.Router();
 
 // GET
 router.get('/entry', async (req, res) => {
-    const { month, year } = req.params;
+    const filterConditions = req.query;
     let entries = [];
 
-    if (year && month) {
-        entries = await DiaryEntry
-            .find({ month, year })
-            .populate({
-                path: 'entry',
-                populate: { path: 'habit' }
-            });
-    }
-    else {
-        entries = await DiaryEntry
-            .find({})
-            .populate({
-                path: 'entry',
-                populate: { path: 'habit' }
-            });
-    }
-
+    entries = await DiaryEntry
+        .find(filterConditions)
+        .populate({
+            path: 'entry',
+            populate: { path: 'habit' }
+        });
     res.status(200).send(entries);
-});
-
-router.get('/entry/today', async (req, res) => {
-    const today = new Date();
-    const entry = await DiaryEntry.find({
-        date: {
-            $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0),
-            $lte: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
-        }
-    }).populate({
-        path: 'entry',
-        populate: { path: 'habit' }
-    });
-
-    res.status(200).send(entry);
 });
 
 // POST
 router.post('/entry', async (req, res) => {
-    let { date, entry } = req.body;
+    let { year, month, day, entry } = req.body;
 
-    if (!date || !entry) {
+    if (!year || !month || !day || !entry) {
         return res.status(422)
             .send({ error: "Missing fields." });
     }
 
     try {
-        const newEntry = new DiaryEntry({ date, entry });
+        const newEntry = new DiaryEntry({ year, month, day, entry });
         await newEntry.save();
         let newEntryPopulated = await newEntry.populate({
             path: 'entry',
             populate: { path: 'habit' }
         }).execPopulate();
-        res.status(201).json(newEntry);
+        res.status(201).json(newEntryPopulated);
     } catch (e) {
         res.status(422).send({ error: e });
     }
